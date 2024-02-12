@@ -24,6 +24,10 @@ const User = conn.model(
         type: String,
         required: true,
       },
+      CPF: {
+        type: String,
+        required: true,
+      },
     },
     { timestamps: true } //serve para criar dois dados, como as duas colunas do sql para saber a data de criação e a de atualização
   )
