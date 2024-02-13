@@ -11,6 +11,12 @@ const jwt = require("jsonwebtoken");
 module.exports = class UserController {
   static async register(req: UserInterface, res: ResInterface) {
     const { name, email, phone, password, confirmpassword, CPF } = req.body;
+    let image = req.body;
+
+    if (req.file) {
+      image = req.file.filename;
+    }
+
     if (!name) {
       res.status(422).json({ message: "O nome é obrigatório!" }); //422 - requisição realizada porém o servidor não consegue processá-la
       return;
@@ -51,7 +57,9 @@ module.exports = class UserController {
       phone,
       password,
       CPF,
+      image,
     });
+
     try {
       const newUser = await user.save();
       res
@@ -86,11 +94,9 @@ module.exports = class UserController {
       return;
     }
 
-    res
-      .status(200)
-      .json({
-        message: `ola ${user.name}, login realizado com sucesso`,
-        user: `${user._id}`,
-      });
+    res.status(200).json({
+      message: `ola ${user.name}, login realizado com sucesso`,
+      user: `${user._id}`,
+    });
   }
 };

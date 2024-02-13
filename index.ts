@@ -11,6 +11,7 @@ app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 //public folder for images - pasta publica para imagens
 app.use(express.static("public"));
+app.use("/public", express.static("public"));
 
 const UserRoutes = require("./routes/UserRoutes");
 const ProductRoutes = require("./routes/ProductRoutes");

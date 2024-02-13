@@ -1,4 +1,5 @@
 interface UserInterface {
+  file: any;
   body: {
     name: string;
     email: string;
@@ -6,6 +7,7 @@ interface UserInterface {
     password: string;
     confirmpassword: string;
     CPF: string;
+    image?: string;
   };
   save(): unknown;
   name: string;
