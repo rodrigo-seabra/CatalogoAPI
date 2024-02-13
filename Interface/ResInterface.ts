@@ -1,7 +1,6 @@
 interface ResInterface {
-  status: any;
   message: string;
-  cpf?: string;
+  status: any;
 }
 
 export { ResInterface };

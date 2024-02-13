@@ -2,6 +2,9 @@ const UserModel = require("../models/User");
 import { UserInterface } from "../Interface/UserInterface";
 import { ResInterface } from "../Interface/ResInterface";
 
+const createUserToken = require("../helpers/create-user-token");
+import { getToken } from "../helpers/get-token";
+import { getUserByToken } from "../helpers/getUserByToken";
 //import bcrypt
 const bcrypt = require("bcrypt");
 
@@ -43,6 +46,14 @@ module.exports = class UserController {
         .json({ message: "A senha de confirmaçãao é obrigatória!" }); //422 - requisição realizada porém o servidor não consegue processá-la
       return;
     }
+
+    //validando as senhas
+    if (password !== confirmpassword) {
+      res.status(422).json({
+        message: "A senha e a confirmação de senha precisam ser iguais!",
+      }); //422 - requisição realizada porém o servidor não consegue processá-la
+      return;
+    }
     const userExists = await UserModel.findOne({ email: email });
 
     if (userExists) {
@@ -52,24 +63,21 @@ module.exports = class UserController {
       return;
     }
     const user: UserInterface = new UserModel({
-      name,
-      email,
-      phone,
-      password,
-      CPF,
-      image,
+      name: String,
+      email: String,
+      phone: String,
+      password: String,
+      CPF: String,
+      image: String,
     });
 
     try {
       const newUser = await user.save();
-      res
-        .status(200)
-        .json({ message: "User cadastrado com sucesso!", cpf: `${CPF}` });
+      await createUserToken(newUser, req, res);
     } catch (err) {
       res.status(500).json({ message: err });
     }
   }
-  static async checkUser(req: UserInterface, res: ResInterface) {}
 
   static async login(req: UserInterface, res: ResInterface) {
     const { email, password } = req.body;
@@ -94,9 +102,70 @@ module.exports = class UserController {
       return;
     }
 
-    res.status(200).json({
-      message: `ola ${user.name}, login realizado com sucesso`,
-      user: `${user._id}`,
-    });
+    await createUserToken(user, req, res);
+  }
+  static async editUser(req: UserInterface, res: ResInterface) {
+    const id = req.params.id;
+    //check if user exists
+    const token = getToken(req);
+    const user = await getUserByToken(token);
+    const { name, email, phone, password, confirmpassword } = req.body;
+
+    if (req.file) {
+      user.image = req.file.filename;
+    }
+
+    //VALIDATIONS
+    if (!name) {
+      res.status(422).json({ message: "O nome é obrigatório!" });
+      return;
+    }
+
+    user.name = name;
+
+    if (!email) {
+      res.status(422).json({ message: "O e-mail é obrigatório!" });
+      return;
+    }
+
+    // check if user exists
+    const userExists = await UserModel.findOne({ email: email });
+
+    if (user.email !== email && userExists) {
+      res.status(422).json({ message: "Por favor, utilize outro e-mail!" });
+      return;
+    }
+
+    user.email = email;
+    if (!phone) {
+      res.status(422).json({ message: "O telefone é obrigatório!" }); //422 - requisição realizada porém o servidor não consegue processá-la
+      return;
+    }
+
+    if (password != confirmpassword) {
+      res.status(422).json({ message: "As senhas não conferem" }); //422 - requisição realizada porém o servidor não consegue processá-la
+      return;
+    }
+    // ou seja, se o user mandou a senha certa e deseja realmente mudá-la
+    else if (password === confirmpassword && password != null) {
+      user.password = password;
+    }
+
+    //try catch que valida se as alterações deram certo ou errado
+    try {
+      //returns user updated data
+
+      const updatedUser = await User.findByIdAndUpdate(
+        { _id: user._id },
+        { $set: user }, //os dados que serão atualizados
+        { new: true } // parametros para atualizar os dados com sucesso
+      );
+
+      res.status(200).json({ message: "Usuário atualizado com sucesso!" });
+    } catch (error) {
+      res.status(500).json({ message: error });
+    }
+
+    console.log(user);
   }
 };

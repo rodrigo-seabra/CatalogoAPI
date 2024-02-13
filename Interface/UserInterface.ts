@@ -1,4 +1,5 @@
 interface UserInterface {
+  params: any;
   file: any;
   body: {
     name: string;
