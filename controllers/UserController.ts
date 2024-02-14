@@ -1,6 +1,6 @@
 const UserModel = require("../models/User");
 import { UserInterface } from "../Interface/UserInterface";
-import { ResInterface } from "../Interface/ResInterface";
+import { Request, Response } from "express";
 
 const createUserToken = require("../helpers/create-user-token");
 import { getToken } from "../helpers/get-token";
@@ -12,9 +12,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 module.exports = class UserController {
-  static async register(req: UserInterface, res: ResInterface) {
+  static async register(req: Request, res: Response) {
     const { name, email, phone, password, confirmpassword, CPF } = req.body;
-    let image = req.body;
+    let image: string | undefined = undefined;
 
     if (req.file) {
       image = req.file.filename;
@@ -54,7 +54,9 @@ module.exports = class UserController {
       }); //422 - requisição realizada porém o servidor não consegue processá-la
       return;
     }
-    const userExists = await UserModel.findOne({ email: email });
+    const userExists: UserInterface | null = await UserModel.findOne({
+      email: email,
+    });
 
     if (userExists) {
       res.status(422).json({
@@ -79,7 +81,7 @@ module.exports = class UserController {
     }
   }
 
-  static async login(req: UserInterface, res: ResInterface) {
+  static async login(req: Request, res: Response) {
     const { email, password } = req.body;
 
     //validations
@@ -93,7 +95,9 @@ module.exports = class UserController {
     }
 
     //check if user exists - verificando se o user existe
-    const user = await UserModel.findOne({ email: email });
+    const user: UserInterface | null = await UserModel.findOne({
+      email: email,
+    });
 
     if (!user) {
       res.status(422).json({
@@ -104,11 +108,11 @@ module.exports = class UserController {
 
     await createUserToken(user, req, res);
   }
-  static async editUser(req: UserInterface, res: ResInterface) {
-    const id = req.params.id;
+  static async editUser(req: Request, res: Response) {
+    const id: string = req.params.id;
     //check if user exists
-    const token = getToken(req);
-    const user = await getUserByToken(token);
+    const token: string = getToken(req);
+    const user: UserInterface = await getUserByToken(token);
     const { name, email, phone, password, confirmpassword } = req.body;
 
     if (req.file) {
@@ -129,7 +133,9 @@ module.exports = class UserController {
     }
 
     // check if user exists
-    const userExists = await UserModel.findOne({ email: email });
+    const userExists: UserInterface | null = await UserModel.findOne({
+      email: email,
+    });
 
     if (user.email !== email && userExists) {
       res.status(422).json({ message: "Por favor, utilize outro e-mail!" });

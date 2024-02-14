@@ -1,20 +1,10 @@
-interface UserInterface {
-  params: any;
-  file: any;
-  body: {
-    name: string;
-    email: string;
-    phone: string;
-    password: string;
-    confirmpassword: string;
-    CPF: string;
-    image?: string;
-  };
+export interface UserInterface {
   save(): unknown;
+  _id: any;
   name: string;
   email: string;
   phone: string;
   password: string;
+  CPF: string;
   image?: string;
 }
-export { UserInterface };
