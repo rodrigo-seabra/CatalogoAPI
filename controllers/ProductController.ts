@@ -7,6 +7,7 @@ const createUserToken = require("../helpers/create-user-token");
 import { getToken } from "../helpers/get-token";
 import { getUserByToken } from "../helpers/getUserByToken";
 import { UserInterface } from "../Interface/UserInterface";
+import { ProductInterface } from "../Interface/ProductInterface";
 
 module.exports = class ProductController {
   static async create(req: Request, res: Response) {
@@ -45,7 +46,7 @@ module.exports = class ProductController {
       return;
     }
 
-    const product = new ProductModel({
+    const product: ProductInterface = new ProductModel({
       modelo,
       marca,
       ano,
@@ -74,7 +75,7 @@ module.exports = class ProductController {
   }
 
   static async getProductById(req: Request, res: Response) {
-    const id = req.params.id;
+    const id: string = req.params.id;
 
     //checando se o valor é um object id válido
     if (!ObjectId.isValid(id)) {
@@ -83,7 +84,9 @@ module.exports = class ProductController {
     }
 
     //check if pet exists
-    const product = await ProductModel.findOne({ _id: id });
+    const product: ProductInterface | null = await ProductModel.findOne({
+      _id: id,
+    });
     if (!product) {
       res.status(404).json({ message: "product não encontrado!" }); //404 - recurso não existe
       return;
@@ -102,7 +105,9 @@ module.exports = class ProductController {
     }
 
     //check if pet exists
-    const product: any = await ProductModel.findOne({ _id: id });
+    const product: ProductInterface | null = await ProductModel.findOne({
+      _id: id,
+    });
     if (!product) {
       res.status(404).json({ message: "produto não encontrado!" }); //404 - recurso não existe
       return;
