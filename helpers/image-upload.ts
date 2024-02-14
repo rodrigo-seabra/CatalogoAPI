@@ -24,7 +24,7 @@ const imageStorage = multer.diskStorage({
   },
 });
 
-const imageUpload = multer({
+export const imageUpload = multer({
   storage: imageStorage,
   fileFilter(req: Request, file: Express.Multer.File, cb: any) {
     if (!file.originalname.match(/\.(png|jpg)$/)) {
@@ -34,5 +34,3 @@ const imageUpload = multer({
     cb(null, true);
   },
 });
-
-export default imageUpload;
