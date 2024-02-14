@@ -9,8 +9,8 @@ export const imageStorage = multer.diskStorage({
 
     if (req.baseUrl.includes("users")) {
       folder = "users";
-    } else if (req.baseUrl.includes("produtc")) {
-      folder = "produtc";
+    } else if (req.baseUrl.includes("product")) {
+      folder = "product";
     }
     cb(null, `public/images/${folder}/`);
   },
