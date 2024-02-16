@@ -127,4 +127,76 @@ module.exports = class ProductController {
     await ProductModel.findOneAndDelete({ _id: id });
     res.status(200).json({ message: "produto removido com sucesso!" });
   }
+  static async UpdateProduct(req: Request, res: Response) {
+    const id: string = req.params.id;
+    const { modelo, categoria, marca, ano, descricao } = req.body;
+    let image: string | undefined = undefined;
+    const token: string = getToken(req);
+    const user: UserInterface = await getUserByToken(token);
+
+    //images upload
+
+    const updatedData = { modelo, categoria, marca, ano, descricao, image }; // ficará os dados que serão atualizados dos pets durante esse processo
+
+    //check if pet exists
+    const Product: ProductInterface | null = await ProductModel.findOne({
+      _id: id,
+    });
+    if (!Product) {
+      res.status(404).json({ message: "Pet não encontrado!" }); //404 - recurso não existe
+      return;
+    }
+
+    if (req.file) {
+      image = req.file.filename;
+    } else {
+      updatedData.image = image;
+    }
+    if (Product.user._id.toString() !== user._id.toString()) {
+      res.status(422).json({
+        message:
+          "Houve um problema ao processar a sua solicitação, tente novamente mais tarde!",
+      });
+      return;
+    }
+    //validations
+    if (!modelo) {
+      res.status(422).json({ message: "O modelo é obrigatório" });
+      return;
+    } else {
+      updatedData.modelo = modelo;
+    }
+
+    if (!categoria) {
+      res.status(422).json({ message: "A categoria é obrigatória" });
+      return;
+    } else {
+      updatedData.categoria = categoria;
+    }
+
+    if (!marca) {
+      res.status(422).json({ message: "A marca é obrigatória" });
+      return;
+    } else {
+      updatedData.marca = marca;
+    }
+
+    if (!descricao) {
+      res.status(422).json({ message: "A descricao é obrigatória" });
+      return;
+    } else {
+      updatedData.descricao = descricao;
+    }
+
+    if (!ano) {
+      res.status(422).json({ message: "O ano é obrigatório" });
+      return;
+    } else {
+      updatedData.ano = ano;
+    }
+
+    await ProductModel.findByIdAndUpdate(id, updatedData);
+
+    res.status(200).json({ message: "Pet atualizado com sucesso!" });
+  }
 };

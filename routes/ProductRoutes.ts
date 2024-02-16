@@ -9,11 +9,14 @@ routerProduct.post(
   imageUpload.single("image"),
   ProductController.create
 );
-
 routerProduct.get("/getall", ProductController.getAll);
-
 routerProduct.get("/:id", ProductController.getProductById);
-
 routerProduct.delete("/:id", verifyToken, ProductController.removeProductById);
+routerProduct.patch(
+  "/edit/:id",
+  verifyToken,
+  imageUpload.single("image"),
+  ProductController.UpdateProduct
+);
 
 module.exports = routerProduct;
