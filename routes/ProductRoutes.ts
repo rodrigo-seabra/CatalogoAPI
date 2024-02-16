@@ -2,7 +2,7 @@ const routerProduct = require("express").Router();
 const ProductController = require("../controllers/ProductController");
 import { imageUpload } from "../helpers/image-upload";
 
-const verifyToken = require("../helpers/verifyToken.ts");
+const verifyToken = require("../helpers/verifyToken");
 
 routerProduct.post(
   "/create",

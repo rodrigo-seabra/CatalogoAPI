@@ -3,7 +3,7 @@ const UserController = require("../controllers/UserController");
 import { imageUpload } from "../helpers/image-upload";
 
 //middleware
-const verifyToken = require("../helpers/verifyToken.ts");
+const verifyToken = require("../helpers/verifyToken");
 
 routerUser.post(
   "/register",
