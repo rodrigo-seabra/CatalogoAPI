@@ -1,8 +1,6 @@
-import { ResInterface } from "../Interface/ResInterface";
-
 const jwt = require("jsonwebtoken");
 
-const createUserToken = async (user: any, req: any, res: ResInterface) => {
+const createUserToken = async (user: any, req: any, res: any) => {
   const token = jwt.sign(
     // payload data
     {
@@ -17,7 +15,6 @@ const createUserToken = async (user: any, req: any, res: ResInterface) => {
     message: "Você está autenticado!",
     token: token,
     userId: user._id,
-    cpf: user.CPF,
   });
 };
 

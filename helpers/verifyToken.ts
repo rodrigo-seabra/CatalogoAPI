@@ -1,12 +1,11 @@
 const jwt = require("jsonwebtoken");
 
-import { ResInterface } from "../Interface/ResInterface";
 //pegando os tokens
 import { getToken } from "./get-token";
 
 //middleware to validate token - middleware, função quem ocorre entre a requisição e a resposta, e neste caso está servindo para verificar o token
 
-const checkToken = (req: any, res: ResInterface, next: any) => {
+const checkToken = (req: any, res: any, next: any) => {
   //verificando se veio o campo de autorização no header
   if (!req.headers.authorization) {
     return res.status(401).json({ message: "Acesso negado!" });
