@@ -64,13 +64,17 @@ module.exports = class UserController {
       }); //422 - requisição realizada porém o servidor não consegue processá-la
       return;
     }
+    //CREATE A PASSWORD - pois nunca salvamos a senha do user no banco
+    const salt = await bcrypt.genSalt(12); //12 caracteres a mais
+    const passwordHash = await bcrypt.hash(password, salt);
+
     const user: UserInterface = new UserModel({
-      name: String,
-      email: String,
-      phone: String,
-      password: String,
-      CPF: String,
-      image: String,
+      name,
+      email,
+      phone,
+      password: passwordHash,
+      CPF,
+      image,
     });
 
     try {
@@ -102,6 +106,15 @@ module.exports = class UserController {
     if (!user) {
       res.status(422).json({
         message: "Não há usuário cadastrado com esse e-mail",
+      }); //422 - requisição realizada porém o servidor não consegue processá-la
+      return;
+    }
+    //check if password match with db password
+    const checkPassword = await bcrypt.compare(password, user.password);
+
+    if (!checkPassword) {
+      res.status(422).json({
+        message: "Senha inválida",
       }); //422 - requisição realizada porém o servidor não consegue processá-la
       return;
     }
@@ -154,7 +167,11 @@ module.exports = class UserController {
     }
     // ou seja, se o user mandou a senha certa e deseja realmente mudá-la
     else if (password === confirmpassword && password != null) {
-      user.password = password;
+      //CREATE A PASSWORD - pois nunca salvamos a senha do user no banco
+      const salt = await bcrypt.genSalt(12); //12 caracteres a mais
+      const passwordHash = await bcrypt.hash(password, salt);
+
+      user.password = passwordHash;
     }
 
     //try catch que valida se as alterações deram certo ou errado
