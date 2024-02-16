@@ -13,8 +13,8 @@ app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(express.static("public"));
 app.use("/public", express.static("public"));
 
-const UserRoutes = require("../routes/UserRoutes");
-const ProductRoutes = require("../routes/ProductRoutes");
+const UserRoutes = require("./routes/UserRoutes");
+const ProductRoutes = require("./routes/ProductRoutes");
 
 app.use("/users", UserRoutes); //rotas de user
 app.use("/product", ProductRoutes); //rotas de produtos
