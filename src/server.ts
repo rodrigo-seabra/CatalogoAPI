@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json()); //nao precisa do url encoded pois só irá se comunicar em json mesmo
 
 //Solve cors - resolvendo o problema de cors
-app.use(cors({ credentials: true, origin: "http://localhost:3333" }));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 //public folder for images - pasta publica para imagens
 app.use(express.static("public"));
