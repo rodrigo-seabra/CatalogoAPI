@@ -12,7 +12,13 @@ import { ProductInterface } from "../Interface/ProductInterface";
 module.exports = class ProductController {
   static async create(req: Request, res: Response) {
     const token: string = getToken(req);
-    const user: any = await getUserByToken(token);
+    let user: UserInterface;
+    try {
+        user = await getUserByToken(token);
+    } catch (error) {
+        res.status(401).json({ message: "Token inválido!" });
+        return;
+    }
     const { modelo, categoria, marca, ano, descricao } = req.body;
     let image: string | undefined = undefined;
     //images upload
